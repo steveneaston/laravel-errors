@@ -3,6 +3,7 @@
 namespace Seaston\LaravelErrors\Middleware;
 
 use Closure;
+use Seaston\LaravelErrors\ViewErrorBag;
 
 class ShareErrorsFromSession
 {
@@ -16,7 +17,7 @@ class ShareErrorsFromSession
     public function handle($request, Closure $next)
     {
         // Load errors from the session into Seaston\LaravelErrors\ViewErrorBag
-        app('form-errors')->make($request);
+        app(ViewErrorBag::class)->make($request);
 
         // Putting the errors in the view for every view allows the developer to just
         // assume that some errors are always available, which is convenient since

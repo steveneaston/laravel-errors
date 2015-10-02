@@ -26,13 +26,13 @@ class ErrorsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('form-errors', function ($app) {
+        $this->app->singleton(ViewErrorBag::class, function ($app) {
             return new ViewErrorBag;
         });
     }
 
     public function provides()
     {
-        return ['form-errors'];
+        return [ViewErrorBag::class];
     }
 }

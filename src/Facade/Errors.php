@@ -3,6 +3,7 @@
 namespace Seaston\LaravelErrors\Facade;
 
 use Illuminate\Support\Facades\Facade;
+use Seaston\LaravelErrors\ViewErrorBag;
 
 class Errors extends Facade
 {
@@ -13,6 +14,6 @@ class Errors extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'form-errors';
+        return ViewErrorBag::class;
     }
 }
