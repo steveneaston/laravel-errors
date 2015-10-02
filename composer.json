@@ -1,0 +1,30 @@
+{
+    "name": "seaston/laravel-errors",
+    "description": "Laravel View Error Bag",
+    "keywords": [
+        "seaston",
+        "laravel",
+        "errors"
+    ],
+    "homepage": "https://github.com/steveneaston/laravel-errors",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steven Easton",
+            "email": "steven@littleredletter.com"
+        }
+    ],
+    "require": {
+        "php" : ">=5.5.0",
+        "illuminate/support": "^5.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "mockery/mockery": "^0.9.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Seaston\\LaravelErrors\\": "src"
+        }
+    }
+}
