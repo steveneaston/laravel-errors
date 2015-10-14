@@ -207,4 +207,14 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function it_returns_an_individual_error_message()
+    {
+        $this->assertEquals(
+            '<ul class="error"><li>Message for name</li></ul>',
+            $this->bag->message('name')
+        );
+    }
 }

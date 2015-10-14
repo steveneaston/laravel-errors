@@ -10,7 +10,8 @@ class ViewErrorBag extends BaseViewErrorBag
 
     protected $classes = [
         'field' => 'field-error',
-        'list'  => 'error-desc'
+        'list'  => 'error-desc',
+        'message' => 'error'
     ];
 
     /**
@@ -137,6 +138,19 @@ class ViewErrorBag extends BaseViewErrorBag
         }
 
         return $this->lister($this->all(), $class);
+    }
+
+    /**
+     * Render a list of messages for an individual field
+     *
+     * @param  string $key
+     * @param  string|null $class
+     * @return string
+     */
+    public function message($key, $class = null)
+    {
+        $class = $class ?: $this->getClass('message');
+        return $this->render($key, $this->getClass('message'));
     }
 
     /**
