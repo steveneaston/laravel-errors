@@ -8,6 +8,11 @@ use Illuminate\Support\ViewErrorBag as BaseViewErrorBag;
 class ViewErrorBag extends BaseViewErrorBag
 {
 
+    protected $classes = [
+        'field' => 'field-error',
+        'list'  => 'error-desc'
+    ];
+
     /**
      * Load an existing Illuminate\Support\ViewErrorBag
      *
@@ -79,8 +84,9 @@ class ViewErrorBag extends BaseViewErrorBag
      * @param  boolean $single
      * @return string
      */
-    public function classes($key, $classes = 'field-error', $single = false)
+    public function classes($key, $classes = null, $single = false)
     {
+        $classes = $classes ?: $this->getClass('field');
         $classes = is_array($classes) ? $classes : explode(' ', $classes);
         $errorClass = array_shift($classes);
 
@@ -105,20 +111,23 @@ class ViewErrorBag extends BaseViewErrorBag
      * @param  mixed $classes
      * @return string
      */
-    public function singleClass($key, $classes = 'field-error')
+    public function singleClass($key, $classes = null)
     {
+        $classes = $classes ?: $this->getClass('field');
         return $this->classes($key, $classes, true);
     }
 
     /**
      * Render an unordered list
      *
-     * @param  [type] $key   [description]
-     * @param  string $class [description]
-     * @return [type]        [description]
+     * @param  string $key
+     * @param  string $class
+     * @return string
      */
-    public function render($key = null, $class = 'error-desc')
+    public function render($key = null, $class = null)
     {
+        $class = $class ?: $this->getClass('list');
+
         if (! $this->all() || ($key && ! $this->has($key))) {
             return false;
         }
@@ -155,5 +164,39 @@ class ViewErrorBag extends BaseViewErrorBag
         $list .= '</ul>';
 
         return $list;
+    }
+
+    /**
+     * Return a individual class
+     *
+     * @param  string $key
+     * @return string|null
+     */
+    public function getClass($key)
+    {
+        return array_key_exists($key, $this->classes)
+                ? $this->classes[$key]
+                : null;
+    }
+
+    /**
+     * Set the default classes
+     *
+     * @param array $classes
+     */
+    public function setClasses(array $classes)
+    {
+        $this->classes = array_merge($this->classes, $classes);
+    }
+
+    /**
+     * Set an individual default class
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setClass($key, $value)
+    {
+        $this->setClasses([$key => $value]);
     }
 }

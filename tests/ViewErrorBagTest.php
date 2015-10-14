@@ -171,4 +171,40 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
             $this->bag->render('email', ['errors', 'error-list'])
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_can_alter_the_default_classes()
+    {
+        $this->bag->setClasses(['field' => 'buttery', 'list' => 'crunchy']);
+
+        $this->assertEquals(' class="buttery"', $this->bag->classes('name'));
+
+        $this->assertEquals(
+            '<ul class="crunchy"><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul>',
+            $this->bag->render()
+        );
+
+        $this->assertEquals(
+            '<ul class="crunchy"><li>Message for name</li></ul>',
+            $this->bag->render('name')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_alter_an_individual_class()
+    {
+        $this->bag->setClass('field', 'buttery');
+
+        $this->assertEquals(' class="buttery"', $this->bag->classes('name'));
+
+        $this->assertEquals(
+            '<ul class="error-desc"><li>Message for name</li></ul>',
+            $this->bag->render('name')
+        );
+    }
+
 }
