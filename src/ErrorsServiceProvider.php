@@ -16,7 +16,9 @@ class ErrorsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->publishes([
+            __DIR__.'/../config/errors.php' => config_path('errors.php'),
+        ], 'config');
     }
 
     /**
@@ -26,8 +28,12 @@ class ErrorsServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/errors.php', 'errors');
+
         $this->app->singleton(ViewErrorBag::class, function ($app) {
-            return new ViewErrorBag;
+            $errorBag = new ViewErrorBag;
+            $errorBag->setClasses($app['config']->get('errors', []));
+            return $errorBag;
         });
     }
 
