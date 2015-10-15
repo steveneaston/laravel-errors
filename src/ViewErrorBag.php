@@ -130,13 +130,16 @@ class ViewErrorBag extends BaseViewErrorBag
     /**
      * Render an unordered list
      *
-     * @param  string $key
-     * @param  string $class
+     * @param  mixed $message
+     * @param  string|null $key
+     * @param  string|null $class
      * @return string
      */
-    public function render($key = null, $class = null)
+    public function render($message = null, $key = null, $class = null)
     {
         $class = $class ?: $this->getClass('list');
+
+        $this->withMessage($message);
 
         if (! $this->all() || ($key && ! $this->has($key))) {
             return false;
@@ -153,13 +156,14 @@ class ViewErrorBag extends BaseViewErrorBag
      * Render a list of messages for an individual field
      *
      * @param  string $key
+     * @param  mixed $message
      * @param  string|null $class
      * @return string
      */
-    public function field($key, $class = null)
+    public function field($key, $message = null, $class = null)
     {
         $class = $class ?: $this->getClass('fieldList');
-        return $this->render($key, $class);
+        return $this->render($message, $key, $class);
     }
 
     public function withMessage($message = true)
