@@ -12,7 +12,7 @@ class ViewErrorBag extends BaseViewErrorBag
         'field'        => 'error-field',
         'list'         => 'error-list',
         'fieldList'    => 'error-fieldList',
-        'with-message' => 'has-message'
+        'withMessage' => 'has-message'
     ];
 
     // Default messages
@@ -190,7 +190,7 @@ class ViewErrorBag extends BaseViewErrorBag
         $message = $this->getListMessage($errors);
 
         if ($message) {
-            $class[] = $this->getClass('with-message');
+            $class[] = $this->getClass('withMessage');
         }
 
         $class = $class ? ' class="' . implode(' ', $class) .'"' : '';
