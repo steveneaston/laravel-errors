@@ -32,7 +32,8 @@ class ErrorsServiceProvider extends ServiceProvider
 
         $this->app->singleton(ViewErrorBag::class, function ($app) {
             $errorBag = new ViewErrorBag;
-            $errorBag->setClasses($app['config']->get('errors', []));
+            $errorBag->setClasses($app['config']->get('errors.classes', []));
+            $errorBag->setMessages($app['config']->get('errors.messages', []));
             return $errorBag;
         });
     }

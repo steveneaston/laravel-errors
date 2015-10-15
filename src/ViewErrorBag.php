@@ -7,12 +7,21 @@ use Illuminate\Support\ViewErrorBag as BaseViewErrorBag;
 
 class ViewErrorBag extends BaseViewErrorBag
 {
-
+    // Default Classes
     protected $classes = [
-        'field' => 'field-error',
-        'list'  => 'error-desc',
-        'message' => 'error'
+        'field'        => 'error-field',
+        'list'         => 'error-list',
+        'fieldList'    => 'error-fieldList',
+        'with-message' => 'has-message'
     ];
+
+    // Default messages
+    protected $messages = [
+        'list' => 'There was a problem with your input.'
+    ];
+
+    // List message for use with render()
+    protected $listMessage;
 
     /**
      * Load an existing Illuminate\Support\ViewErrorBag
@@ -147,10 +156,16 @@ class ViewErrorBag extends BaseViewErrorBag
      * @param  string|null $class
      * @return string
      */
-    public function message($key, $class = null)
+    public function field($key, $class = null)
     {
-        $class = $class ?: $this->getClass('message');
-        return $this->render($key, $this->getClass('message'));
+        $class = $class ?: $this->getClass('fieldList');
+        return $this->render($key, $class);
+    }
+
+    public function withMessage($message = true)
+    {
+        $this->setListMessage($message);
+        return $this;
     }
 
     /**
@@ -167,15 +182,29 @@ class ViewErrorBag extends BaseViewErrorBag
         }
 
         $class = ! is_array($class) ? array($class) : $class;
+
+        $message = $this->getListMessage($errors);
+
+        if ($message) {
+            $class[] = $this->getClass('with-message');
+        }
+
         $class = $class ? ' class="' . implode(' ', $class) .'"' : '';
 
-        $list = '<ul'.$class.'>';
+        $list = '<div'.$class.'>';
+
+        if ($message) {
+            $list .= '<p>' . $message . '</p>';
+        }
+
+        $list .= '<ul>';
 
         foreach ($errors as $error) {
             $list .= '<li>' . $error . '</li>';
         }
 
         $list .= '</ul>';
+        $list .= '</div>';
 
         return $list;
     }
@@ -212,5 +241,88 @@ class ViewErrorBag extends BaseViewErrorBag
     public function setClass($key, $value)
     {
         $this->setClasses([$key => $value]);
+    }
+
+    /**
+     * Return a individual class
+     *
+     * @param  string $key
+     * @return string|null
+     */
+    public function getMessage($key)
+    {
+        return array_key_exists($key, $this->messages)
+                ? $this->messages[$key]
+                : null;
+    }
+
+    /**
+     * Set the default messages
+     *
+     * @param array $messages
+     */
+    public function setMessages(array $messages)
+    {
+        $this->messages = array_merge($this->messages, $messages);
+    }
+
+    /**
+     * Set an individual default message
+     *
+     * @param string $key
+     * @param string $value
+     */
+    public function setMessage($key, $value)
+    {
+        $this->setMessages([$key => $value]);
+    }
+
+    /**
+     * Set the message for a rendered list
+     *
+     * @param mixed $message
+     */
+    protected function setListMessage($message)
+    {
+        if ($message) {
+            $this->listMessage = $message === true ? $this->getMessage('list') : $message;
+        }
+    }
+
+    /**
+     * Get and reset the message for a rendered list
+     *
+     * @param  array  $errors
+     * @return string
+     */
+    protected function getListMessage(array $errors)
+    {
+        $message = $this->listMessage;
+
+        if ($message) {
+            $this->listMessage = null;
+        }
+
+        return $this->renderListMessage($message, $errors);
+    }
+
+    /**
+     * Render the message for a rendered list and transform
+     * the message based on the number of errors
+     *
+     * @param  mixed $message
+     * @param  array  $errors
+     * @return string
+     */
+    protected function renderListMessage($message, array $errors)
+    {
+        // If there is no message or the message has no multiples separator return it
+        if (! $message || ! str_contains($message, '|')) return $message;
+
+        // Get the single and multiple versions of the string
+        list($single, $many) = explode('|', $message);
+
+        // Return the correct message based on the number of errors
+        return count($errors) == 1 ? $single : $many;
     }
 }

@@ -108,7 +108,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
     public function it_returns_an_html_class_parameter()
     {
         // Return default and given classes when there is an error
-        $this->assertEquals(' class="field-error"', $this->bag->classes('name'));
+        $this->assertEquals(' class="error-field"', $this->bag->classes('name'));
         $this->assertEquals(' class="form-error"', $this->bag->classes('name', 'form-error'));
 
         // Error classes are first and can be separated by a pipe
@@ -130,7 +130,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
     public function it_returns_a_string_off_class_names()
     {
         // Return default and given classes when there is an error
-        $this->assertEquals(' field-error', $this->bag->singleClass('name'));
+        $this->assertEquals(' error-field', $this->bag->singleClass('name'));
         $this->assertEquals(' form-error', $this->bag->singleClass('name', 'form-error'));
 
         // Error classes are first and can be separated by a pipe
@@ -152,22 +152,22 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
     public function it_returns_an_unordered_list()
     {
         $this->assertEquals(
-            '<ul class="error-desc"><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul>',
+            '<div class="error-list"><ul><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul></div>',
             $this->bag->render()
         );
 
         $this->assertEquals(
-            '<ul class="error-desc"><li>Message for email</li></ul>',
+            '<div class="error-list"><ul><li>Message for email</li></ul></div>',
             $this->bag->render('email')
         );
 
         $this->assertEquals(
-            '<ul class="error-list"><li>Message for email</li></ul>',
+            '<div class="error-list"><ul><li>Message for email</li></ul></div>',
             $this->bag->render('email', 'error-list')
         );
 
         $this->assertEquals(
-            '<ul class="errors error-list"><li>Message for email</li></ul>',
+            '<div class="errors error-list"><ul><li>Message for email</li></ul></div>',
             $this->bag->render('email', ['errors', 'error-list'])
         );
     }
@@ -182,12 +182,12 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(' class="buttery"', $this->bag->classes('name'));
 
         $this->assertEquals(
-            '<ul class="crunchy"><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul>',
+            '<div class="crunchy"><ul><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul></div>',
             $this->bag->render()
         );
 
         $this->assertEquals(
-            '<ul class="crunchy"><li>Message for name</li></ul>',
+            '<div class="crunchy"><ul><li>Message for name</li></ul></div>',
             $this->bag->render('name')
         );
     }
@@ -202,7 +202,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(' class="buttery"', $this->bag->classes('name'));
 
         $this->assertEquals(
-            '<ul class="error-desc"><li>Message for name</li></ul>',
+            '<div class="error-list"><ul><li>Message for name</li></ul></div>',
             $this->bag->render('name')
         );
     }
@@ -213,8 +213,70 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
     public function it_returns_an_individual_error_message()
     {
         $this->assertEquals(
-            '<ul class="error"><li>Message for name</li></ul>',
-            $this->bag->message('name')
+            '<div class="error-fieldList"><ul><li>Message for name</li></ul></div>',
+            $this->bag->field('name')
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_can_include_a_message_with_render()
+    {
+        // Default error message
+        $this->assertEquals(
+            '<div class="error-fieldList has-message"><p>There was a problem with your input.</p><ul><li>Message for name</li></ul></div>',
+            $this->bag->withMessage()->field('name')
+        );
+
+        // Custom error message
+        $this->assertEquals(
+            '<div class="error-fieldList has-message"><p>There was a problem.</p><ul><li>Message for name</li></ul></div>',
+            $this->bag->withMessage('There was a problem.')->field('name')
+        );
+
+        // Custom error message
+        $this->assertEquals(
+            '<div class="error-list has-message"><p>There were some problems.</p><ul><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul></div>',
+            $this->bag->withMessage('There was a problem.|There were some problems.')->render()
+        );
+
+        // Message should only be included the first time
+        $this->assertEquals(
+            '<div class="error-fieldList"><ul><li>Message for name</li></ul></div>',
+            $this->bag->field('name')
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_alter_the_default_messages()
+    {
+        $this->bag->setMessages(['list' => 'There were problems accessing the biscuit tin.']);
+
+        $this->assertEquals(
+            '<div class="error-fieldList has-message"><p>There were problems accessing the biscuit tin.</p><ul><li>Message for name</li></ul></div>',
+            $this->bag->withMessage()->field('name')
+        );
+
+        $this->assertEquals(
+            '<div class="error-list has-message"><p>There were problems accessing the biscuit tin.</p><ul><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul></div>',
+            $this->bag->withMessage()->render()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function it_can_alter_an_individual_default_message()
+    {
+        $this->bag->setMessage('list', 'There were problems accessing the biscuit tin.');
+
+        $this->assertEquals(
+            '<div class="error-fieldList has-message"><p>There were problems accessing the biscuit tin.</p><ul><li>Message for name</li></ul></div>',
+            $this->bag->withMessage()->field('name')
+        );
+    }
+
 }
