@@ -316,4 +316,28 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function it_can_render_an_array_of_keys()
+    {
+        $this->assertEquals(
+            '<div class="error-list"><ul><li>Message for name</li><li>Message for email</li></ul></div>',
+            $this->bag->render(null, ['name', 'email'])
+        );
+
+        // Display in given order
+        $this->assertEquals(
+            '<div class="error-fieldList"><ul><li>Message for email</li><li>Message for name</li></ul></div>',
+            $this->bag->field(['email', 'name'])
+        );
+
+        // Handle only one field given as an array
+        $this->assertEquals(
+            '<div class="error-fieldList"><ul><li>Message for email</li></ul></div>',
+            $this->bag->field(['email'])
+        );
+
+    }
+
 }

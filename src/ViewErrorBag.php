@@ -87,6 +87,23 @@ class ViewErrorBag extends BaseViewErrorBag
     }
 
     /**
+     * Combine errors for multiple keys
+     *
+     * @param  array $keys
+     * @return array
+     */
+    public function only($keys)
+    {
+        $lists = [];
+
+        foreach ((array) $keys as $k) {
+            $lists = array_merge($lists, $this->get($k));
+        }
+
+        return $lists;
+    }
+
+    /**
      * Return HTML class parameter
      *
      * @param  string  $key
@@ -146,7 +163,7 @@ class ViewErrorBag extends BaseViewErrorBag
         }
 
         if ($key) {
-            return $this->lister($this->get($key), $class);
+            return $this->lister(is_array($key) ? $this->only($key) : $this->get($key), $class);
         }
 
         return $this->lister($this->all(), $class);
