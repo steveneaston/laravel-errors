@@ -4,11 +4,10 @@ namespace Seaston\LaravelErrors;
 
 use Illuminate\Support\ServiceProvider;
 use Seaston\LaravelErrors\ViewErrorBag;
+use Illuminate\Contracts\Support\DeferrableProvider;
 
-class ErrorsServiceProvider extends ServiceProvider
+class ErrorsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
-    protected $defer = true;
-
     /**
      * Bootstrap the application services.
      *
