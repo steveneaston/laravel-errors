@@ -20,12 +20,17 @@
         "illuminate/http": "^6.0|^7.0|^8.0"
     },
     "require-dev": {
-        "mockery/mockery": "^0.9.4",
-        "phpunit/phpunit": "^5.0"
+        "mockery/mockery": "^1.5",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
             "Seaston\\LaravelErrors\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Seaston\\LaravelErrors\\Tests\\": "tests"
         }
     }
 }

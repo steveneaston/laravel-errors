@@ -1,13 +1,19 @@
 <?php
 
+namespace Seaston\LaravelErrors\Tests;
+
+use Mockery;
+use Illuminate\Http\Request;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Support\MessageBag;
 use Seaston\LaravelErrors\ViewErrorBag;
 
-class ViewErrorBagTest extends PHPUnit_Framework_TestCase
+class ViewErrorBagTest extends TestCase
 {
     protected $bag;
 
-    public function tearDown() {
+    public function tearDown(): void
+    {
         Mockery::close();
     }
 
@@ -29,31 +35,25 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->bag = $bag;
     }
 
-    /**
-     * @test
-     */
-    public function it_is_instantiable()
+    public function test_it_is_instantiable()
     {
         $this->assertInstanceOf(ViewErrorBag::class, $this->bag);
     }
 
-    /**
-     * @test
-     */
-    public function it_loads_an_existing_view_error_bag_from_a_request()
+    public function test_it_loads_an_existing_view_error_bag_from_a_request()
     {
-        $request = Mockery::mock(Illuminate\Http\Request::class);
+        $request = Mockery::mock(Request::class);
 
         $messageBags = $this->bag->getBags();
 
         $request
             ->shouldReceive('session')
             ->once()
-            ->andReturn(Mockery::self()) // Session
+            ->andReturnSelf() // Session
 
             ->shouldReceive('get')
             ->once()
-            ->andReturn(Mockery::self()) // ViewErrorBag
+            ->andReturnSelf() // ViewErrorBag
 
             ->shouldReceive('getBags')
             ->once()
@@ -65,10 +65,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(3, $bag->count());
     }
 
-    /**
-     * @test
-     */
-    public function it_has_a_default_bag()
+    public function test_it_has_a_default_bag()
     {
         $bag = new ViewErrorBag;
         $this->assertCount(0, $bag);
@@ -76,10 +73,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertCount(3, $this->bag);
     }
 
-    /**
-     * @test
-     */
-    public function it_checks_any_of_the_given_keys_are_set()
+    public function test_it_checks_any_of_the_given_keys_are_set()
     {
         $this->assertTrue($this->bag->has('name'));
         $this->assertFalse($this->bag->has('biscuit'));
@@ -90,10 +84,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->bag->hasAny('email', 'password'));
     }
 
-    /**
-     * @test
-     */
-    public function it_checks_all_of_the_given_keys_are_set()
+    public function test_it_checks_all_of_the_given_keys_are_set()
     {
         $this->assertTrue($this->bag->hasAll('name'));
         $this->assertFalse($this->bag->hasAll('biscuit'));
@@ -102,10 +93,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->bag->hasAll('email', 'biscuit'));
     }
 
-    /**
-     * @test
-     */
-    public function it_returns_an_html_class_parameter()
+    public function test_it_returns_an_html_class_parameter()
     {
         // Return default and given classes when there is an error
         $this->assertEquals(' class="error-field"', $this->bag->classes('name'));
@@ -124,10 +112,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(' class="field"', $this->bag->classes('biscuit', 'error|form-error field'));
     }
 
-    /**
-     * @test
-     */
-    public function it_returns_a_string_off_class_names()
+    public function test_it_returns_a_string_off_class_names()
     {
         // Return default and given classes when there is an error
         $this->assertEquals(' error-field', $this->bag->singleClass('name'));
@@ -146,10 +131,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(' field', $this->bag->singleClass('biscuit', 'error|form-error field'));
     }
 
-    /**
-     * @test
-     */
-    public function it_returns_an_unordered_list()
+    public function test_it_returns_an_unordered_list()
     {
         $this->assertEquals(
             '<div class="error-list"><ul><li>Message for name</li><li>Message for email</li><li>Message for password</li></ul></div>',
@@ -172,10 +154,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_alter_the_default_classes()
+    public function test_it_can_alter_the_default_classes()
     {
         $this->bag->setClasses(['field' => 'buttery', 'list' => 'crunchy']);
 
@@ -192,10 +171,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_alter_an_individual_class()
+    public function test_it_can_alter_an_individual_class()
     {
         $this->bag->setClass('field', 'buttery');
 
@@ -207,10 +183,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_returns_an_individual_error_message()
+    public function test_it_returns_an_individual_error_message()
     {
         $this->assertEquals(
             '<div class="error-fieldList"><ul><li>Message for name</li></ul></div>',
@@ -218,10 +191,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_include_a_message_with_render()
+    public function test_it_can_include_a_message_with_render()
     {
         // Default error message
         $this->assertEquals(
@@ -248,10 +218,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_use_parameters_to_render_a_list_message()
+    public function test_it_can_use_parameters_to_render_a_list_message()
     {
         // Custom message
         $this->assertEquals(
@@ -282,13 +249,9 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
             '<div class="error-fieldList has-message"><p>Whoops!</p><ul><li>Message for name</li></ul></div>',
             $this->bag->field('name', 'Whoops!')
         );
-
     }
 
-    /**
-     * @test
-     */
-    public function it_can_alter_the_default_messages()
+    public function test_it_can_alter_the_default_messages()
     {
         $this->bag->setMessages(['list' => 'There were problems accessing the biscuit tin.']);
 
@@ -303,10 +266,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_alter_an_individual_default_message()
+    public function test_it_can_alter_an_individual_default_message()
     {
         $this->bag->setMessage('list', 'There were problems accessing the biscuit tin.');
 
@@ -316,10 +276,7 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function it_can_render_an_array_of_keys()
+    public function test_it_can_render_an_array_of_keys()
     {
         $this->assertEquals(
             '<div class="error-list"><ul><li>Message for name</li><li>Message for email</li></ul></div>',
@@ -337,7 +294,5 @@ class ViewErrorBagTest extends PHPUnit_Framework_TestCase
             '<div class="error-fieldList"><ul><li>Message for email</li></ul></div>',
             $this->bag->field(['email'])
         );
-
     }
-
 }

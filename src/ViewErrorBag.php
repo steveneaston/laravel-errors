@@ -26,7 +26,7 @@ class ViewErrorBag extends BaseViewErrorBag
     /**
      * Load an existing Illuminate\Support\ViewErrorBag
      *
-     * @param  Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return void
      */
     public function make(Request $request)
